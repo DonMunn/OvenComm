@@ -17,7 +17,7 @@ public:
         // double | temp  x 100 | (-32768, 32768)
         // double | output / 28800 (%) | (0, 28800)
         // bool | status | (0, 1)
-    OvenComm();
+    explicit OvenComm(QObject *parent = nullptr);
 
     void setTemp(double temp); //Done
     void getTemp(); //Done

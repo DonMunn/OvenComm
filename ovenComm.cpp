@@ -6,7 +6,7 @@
 #include <QTimer>
 #include <QThread>
 
-OvenComm::OvenComm() {
+OvenComm::OvenComm(QObject *parent) : SerialComm(parent) {
     connect(&serial_conn, &QSerialPort::readyRead, this, &OvenComm::serialConnReceiveMessage);
 }
 
