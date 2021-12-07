@@ -1,13 +1,11 @@
 #ifndef OVENCOMM_H
 #define OVENCOMM_H
 
-#include <QObject>
-#include <QSerialPort>
+#include "serialcomm.h"
 #include "settingsdialog.h"
-#include <QQueue>
-#include <QTimer>
 
-class OvenComm : public QObject
+
+class OvenComm : public SerialComm
 {
     Q_OBJECT
 
@@ -21,8 +19,6 @@ public:
         // bool | status | (0, 1)
     OvenComm();
 
-    void updateSerialInfo(const SettingsDialog::Settings &settings);
-
     void setTemp(double temp); //Done
     void getTemp(); //Done
     void getSetTemp(); //Done
@@ -33,33 +29,15 @@ public:
     void setPowerStatus(bool on); //Done
     void getPowerStatus(); //Done
 
-    void openSerialPort(); //Done
-    void closeSerialPort(); //Done
-
-    bool isOpen();
-
-signals:
-    void errorSignal(QSerialPort::SerialPortError error, QString error_string, commands command_sent);
-    void displayDataSignal(int data, commands command_sent);
-
-    void rawDataSignal(QString data);
+protected:
+    void sendError(QSerialPort::SerialPortError error, const QString &error_message) override;
+    void serialConnSendMessage() override;
 
 private:
-    void sendError(QSerialPort::SerialPortError error, QString error_message);
     bool verifyChecksum();
-    void serialConnSendMessage();
-
-    QSerialPort *serial_conn = new QSerialPort(this);
-
-    QString temp_data = "";
-    QQueue<commands> command_queue;
-    QQueue<int> data_queue;
-    QTimer *timer = new QTimer(this);
 
 private slots:
-    void collectErrorData(QSerialPort::SerialPortError error);
-    void serialConnReceiveMessage();
-    void timeout();
+    void serialConnReceiveMessage() override;
 };
 
 #endif // OVENCOMM_H

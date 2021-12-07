@@ -7,35 +7,13 @@
 #include <QThread>
 
 OvenComm::OvenComm() {
-    connect(serial_conn, &QSerialPort::errorOccurred, this, &OvenComm::collectErrorData);
-    connect(serial_conn, &QSerialPort::readyRead, this, &OvenComm::serialConnReceiveMessage);
-    connect(timer, &QTimer::timeout, this, &OvenComm::timeout);
-    timer->setSingleShot(true);
+    connect(&serial_conn, &QSerialPort::readyRead, this, &OvenComm::serialConnReceiveMessage);
 }
 
-void OvenComm::updateSerialInfo(const SettingsDialog::Settings &settings) {
-    serial_conn->setPortName(settings.name);
-    serial_conn->setBaudRate(settings.baudRate);
-    serial_conn->setDataBits(settings.dataBits);
-    serial_conn->setParity(settings.parity);
-    serial_conn->setStopBits(settings.stopBits);
-    serial_conn->setFlowControl(settings.flowControl);
-}
-
-
-void OvenComm::collectErrorData(QSerialPort::SerialPortError error) {
-    //clearError causes another NoError signal to be sent
-    if (error != QSerialPort::NoError) {
-        sendError(error, serial_conn->errorString());
-        serial_conn->clearError();
-    }
-}
-
-
-void OvenComm::sendError(QSerialPort::SerialPortError error, QString error_message) {
+void OvenComm::sendError(QSerialPort::SerialPortError error, const QString &error_message) {
     // clear serial internal read/write buffers
     if (isOpen()) {
-        serial_conn->clear();
+        serial_conn.clear();
     }
 
     // Dequeue command if one is associated with the error
@@ -48,47 +26,14 @@ void OvenComm::sendError(QSerialPort::SerialPortError error, QString error_messa
     }
 }
 
-
-bool OvenComm::isOpen() {
-    return serial_conn->isOpen();
-}
-
-
-void OvenComm::openSerialPort() {
-    if (serial_conn->open(QIODevice::ReadWrite)) {
-        QString successMessage = QString("Connected to %1 : %2, %3, %4, %5, %6")
-                .arg(serial_conn->portName()).arg(serial_conn->baudRate())
-                .arg(serial_conn->dataBits()).arg(serial_conn->parity())
-                .arg(serial_conn->stopBits()).arg(serial_conn->flowControl());
-        qDebug() << successMessage;
-    }
-}
-
-
-void OvenComm::closeSerialPort() {
-    // Reset data related vars
-    command_queue.clear();
-    data_queue.clear();
-    temp_data = "";
-    timer->stop();
-
-    if (isOpen()) {
-        serial_conn->clear();
-        serial_conn->close();
-        qDebug() << "Disconnected";
-    } else {
-        qDebug() << "No open connection";
-    }
-}
-
 void OvenComm::serialConnReceiveMessage() {
     // complete data example: *01f4fb^
     // construct message from parts
-    temp_data += serial_conn->readAll();
+    temp_data += serial_conn.readAll();
 
     if(QRegExp("^\\*[a-fA-F0-9]{6}\\^$").exactMatch(temp_data)) {
         emit rawDataSignal(temp_data);
-        timer->stop();
+        timer.stop();
 
         if (verifyChecksum()) {
             temp_data = "";
@@ -118,13 +63,13 @@ void OvenComm::serialConnSendMessage() {
 
     qDebug() << "final data:" << data;
 
-    if (serial_conn->write(data) == -1) { // -1 indicates error occurred
+    if (serial_conn.write(data) == -1) { // -1 indicates error occurred
         // send QSerialPort::NotOpenError if QOIDevice::NotOpen is triggered
-        if (serial_conn->error() == QSerialPort::NoError) {
+        if (serial_conn.error() == QSerialPort::NoError) {
             sendError(QSerialPort::NotOpenError, "No open connection");
         } //else UNNEEDED as the QSerialPort will emit its own signal for other errors
     } else {
-        timer->start(1000);
+        timer.start(1000);
     }
 }
 
@@ -146,16 +91,8 @@ bool OvenComm::verifyChecksum() {
     int return_data = data.toInt(nullptr, 16);
 
     qDebug() << " read data:" << return_data;
-    emit displayDataSignal(return_data, command_queue.head());
+    //emit displayDataSignal(return_data, command_queue.head());
     return true;
-}
-
-
-void OvenComm::timeout() {
-    // Send error only if partial data has been received
-    if (temp_data != "") {
-        sendError(QSerialPort::TimeoutError, "Timeout partial data");
-    }
 }
 
 void OvenComm::setTemp(double temp) {

@@ -57,6 +57,7 @@
 
 #include <QLabel>
 #include <QMessageBox>
+#include <QString>
 
 //! [0]
 MainWindow::MainWindow(QWidget *parent) :
@@ -80,7 +81,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(o_serial, &OvenComm::errorSignal, this, &MainWindow::handleError);
     connect(o_serial, &OvenComm::rawDataSignal, this, &MainWindow::displayRawData);
-    connect(o_serial, &OvenComm::displayDataSignal, this, &MainWindow::displayData);
+    connect(o_serial, &OvenComm::returnData, this, &MainWindow::displayData);
 }
 
 MainWindow::~MainWindow()
@@ -130,7 +131,7 @@ void MainWindow::displayRawData(QString data)
 
 
 
-void MainWindow::handleError(QSerialPort::SerialPortError error, QString error_string, OvenComm::commands command_sent)
+void MainWindow::handleError(QSerialPort::SerialPortError error, QString error_string, int command_sent)
 {
     if (error == QSerialPort::ResourceError) {
         QMessageBox::critical(this, tr("Critical Error"), error_string);
@@ -160,22 +161,23 @@ void MainWindow::showStatusMessage(const QString &message)
     m_status->setText(message);
 }
 
-void MainWindow::displayData(int data, OvenComm::commands command_sent) {
+void MainWindow::displayData(QString data, int command_sent) {
+    int int_data = data.toInt();
     switch(command_sent) {
         case OvenComm::GETOUTPUT:
-            m_ui->lcdNumberSensorStatus->display((double)data / 28800.0);
+            m_ui->lcdNumberSensorStatus->display((double)int_data / 28800.0);
             break;
         case OvenComm::GETTEMP:
-            m_ui->lcdNumberCurrentTemp->display((double)data / 100.0);
+            m_ui->lcdNumberCurrentTemp->display((double)int_data / 100.0);
             break;
         case OvenComm::GETSETTEMP:
-            m_ui->lcdNumberSetTemp->display((double)data / 100.0);
+            m_ui->lcdNumberSetTemp->display((double)int_data / 100.0);
             break;
         case OvenComm::GETPOWERSTATUS:
-            m_ui->lcdNumberPowerStatus->display((bool)data);
+            m_ui->lcdNumberPowerStatus->display((bool)int_data);
             break;
         case OvenComm::GETSENSORSTATUS:
-            m_ui->lcdNumberSensorStatus->display((bool)data);
+            m_ui->lcdNumberSensorStatus->display((bool)int_data);
             break;
     }
 }

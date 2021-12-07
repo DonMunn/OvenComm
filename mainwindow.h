@@ -85,7 +85,7 @@ private slots:
     void about();
     //void writeData(const QByteArray &data);
     void displayRawData(QString data);
-    void handleError(QSerialPort::SerialPortError error, QString error_string, OvenComm::commands command_sent);
+    void handleError(QSerialPort::SerialPortError error, QString error_string, int command_sent);
 
     void on_pushButtonSetTemp_clicked();
     void on_pushButtonReadTemp_clicked();
@@ -97,7 +97,7 @@ private slots:
     void on_pushButtonReadSensorStatus_clicked();
     void on_pushButtonReadPowerStatus_clicked();
 
-    void displayData(int data, OvenComm::commands command_sent);
+    void displayData(QString data, int command_sent);
 
 private:
     void initActionsConnections();

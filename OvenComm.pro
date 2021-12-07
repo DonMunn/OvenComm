@@ -8,11 +8,13 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     ovenComm.cpp \
+    serialcomm.cpp \
     settingsdialog.cpp
 
 HEADERS += \
     mainwindow.h \
     ovenComm.h \
+    serialcomm.h \
     settingsdialog.h
 
 FORMS += \
