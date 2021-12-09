@@ -26,7 +26,7 @@ protected:
     QSerialPort serial_conn;
     QString temp_data = "";
     QQueue<int> command_queue;
-    QQueue<int> data_queue;
+    QQueue<QString> data_queue;
     QTimer timer;
 
 signals:

@@ -51,7 +51,7 @@ void OvenComm::serialConnReceiveMessage() {
 void OvenComm::serialConnSendMessage() {
     //construct message
     QByteArray data = QString::number(command_queue.head()).rightJustified(2, '0').toUtf8();
-    data += QString::number(data_queue.head(), 16).rightJustified(4, '0').toUtf8();
+    data += QString::number(data_queue.head().toInt(), 16).rightJustified(4, '0').toUtf8();
     //calculate checksum
     qint16 sum_of_bytes = 0;
     for(int i=0; i<data.length(); i++) {
@@ -99,10 +99,10 @@ void OvenComm::setTemp(double temp) {
     if (isOpen()) {
         if(!command_queue.isEmpty()) {
             command_queue.enqueue(SETTEMP);
-            data_queue.enqueue(temp*100.0);
+            data_queue.enqueue(QString::number((int)(temp*100.0)));
         } else {
             command_queue.enqueue(SETTEMP);
-            data_queue.enqueue(temp*100.0);
+            data_queue.enqueue(QString::number((int)(temp*100.0)));
             serialConnSendMessage();
         }
     } else {
@@ -179,10 +179,10 @@ void OvenComm::setPowerStatus(bool on) {
     if (isOpen()) {
         if(!command_queue.isEmpty()) {
             command_queue.enqueue(SETPOWERSTATUS);
-            data_queue.enqueue(on);
+            data_queue.enqueue(QString::number((int)on));
         } else {
             command_queue.enqueue(SETPOWERSTATUS);
-            data_queue.enqueue(on);
+            data_queue.enqueue(QString::number((int)on));
             serialConnSendMessage();
         }
     } else {
