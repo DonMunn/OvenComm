@@ -113,6 +113,20 @@
        <item>
         <widget class="QLCDNumber" name="lcdNumberPowerStatus"/>
        </item>
+       <item>
+        <widget class="QPushButton" name="pushButtonSetPowerStatus">
+         <property name="text">
+          <string>Set Power Status</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBoxPowerStatus">
+         <property name="maximum">
+          <number>1</number>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
     </layout>

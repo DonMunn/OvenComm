@@ -162,8 +162,10 @@ void MainWindow::showStatusMessage(const QString &message)
 }
 
 void MainWindow::displayData(QString data, int command_sent) {
+    OvenComm::commands command = (OvenComm::commands)command_sent;
+    qDebug() << data << command;
     int int_data = data.toInt();
-    switch(command_sent) {
+    switch(command) {
         case OvenComm::GETOUTPUT:
             m_ui->lcdNumberSensorStatus->display((double)int_data / 28800.0);
             break;
@@ -210,10 +212,14 @@ void MainWindow::on_pushButtonReadSet_clicked()
 }
 
 void MainWindow::on_pushButtonReadSensorStatus_clicked() {
-    o_serial->getOutput();
+    o_serial->getSensorStatus();
 }
 
-void MainWindow:: on_pushButtonReadPowerStatus_clicked() {
+void MainWindow::on_pushButtonReadPowerStatus_clicked() {
     o_serial->getPowerStatus();
+}
+
+void MainWindow::on_pushButtonSetPowerStatus_clicked() {
+    o_serial->setPowerStatus(m_ui->spinBoxPowerStatus->value());
 }
 

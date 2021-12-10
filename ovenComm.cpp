@@ -91,7 +91,7 @@ bool OvenComm::verifyChecksum() {
     int return_data = data.toInt(nullptr, 16);
 
     qDebug() << " read data:" << return_data;
-    //emit displayDataSignal(return_data, command_queue.head());
+    emit returnData(QString::number(return_data), command_queue.head());
     return true;
 }
 

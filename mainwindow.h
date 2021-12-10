@@ -97,6 +97,8 @@ private slots:
     void on_pushButtonReadSensorStatus_clicked();
     void on_pushButtonReadPowerStatus_clicked();
 
+    void on_pushButtonSetPowerStatus_clicked();
+
     void displayData(QString data, int command_sent);
 
 private:
