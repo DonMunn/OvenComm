@@ -127,6 +127,13 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QPushButton" name="pushButtonStartMessageTimer">
+         <property name="text">
+          <string>Start Message Timer</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
     </layout>

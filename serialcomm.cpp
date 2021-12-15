@@ -3,8 +3,9 @@
 SerialComm::SerialComm(QObject *parent) : QObject(parent)
 {
     connect(&serial_conn, &QSerialPort::errorOccurred, this, &SerialComm::collectErrorData);
-    connect(&timer, &QTimer::timeout, this, &SerialComm::timeout);
-    timer.setSingleShot(true);
+    connect(&timeout_timer, &QTimer::timeout, this, &SerialComm::timeout);
+    timeout_timer.setSingleShot(true);
+    send_message_timer.setInterval(250);
 }
 
 void SerialComm::openSerialPort() {
@@ -14,6 +15,7 @@ void SerialComm::openSerialPort() {
                 .arg(serial_conn.dataBits()).arg(serial_conn.parity())
                 .arg(serial_conn.stopBits()).arg(serial_conn.flowControl());
         qDebug() << successMessage;
+        send_message_timer.start();
     }
 }
 
@@ -22,7 +24,8 @@ void SerialComm::closeSerialPort() {
     command_queue.clear();
     data_queue.clear();
     temp_data = "";
-    timer.stop();
+    timeout_timer.stop();
+    send_message_timer.stop();
 
     if (isOpen()) {
         serial_conn.clear();
@@ -44,6 +47,12 @@ void SerialComm::updateSerialInfo(const SettingsDialog::Settings &settings) {
     serial_conn.setParity(settings.parity);
     serial_conn.setStopBits(settings.stopBits);
     serial_conn.setFlowControl(settings.flowControl);
+}
+
+void SerialComm::startSendMessageTimer() {
+    if (!send_message_timer.isActive()) {
+        send_message_timer.start();
+    }
 }
 
 //Private

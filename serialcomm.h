@@ -18,6 +18,7 @@ public:
     void closeSerialPort();
     bool isOpen();
     void updateSerialInfo(const SettingsDialog::Settings &settings);
+    void startSendMessageTimer();
 
 protected:
     virtual void serialConnSendMessage() = 0;
@@ -27,7 +28,8 @@ protected:
     QString temp_data = "";
     QQueue<int> command_queue;
     QQueue<QString> data_queue;
-    QTimer timer;
+    QTimer timeout_timer;
+    QTimer send_message_timer;
 
 signals:
     void rawDataSignal(QString data);
@@ -36,6 +38,7 @@ signals:
 
 private slots:
     virtual void serialConnReceiveMessage() = 0;
+    virtual void sendMessage() = 0;
     void collectErrorData(QSerialPort::SerialPortError error);
     void timeout();
 };

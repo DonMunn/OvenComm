@@ -29,15 +29,14 @@ public:
     void setPowerStatus(bool on); //Done
     void getPowerStatus(); //Done
 
-protected:
+private:
     void sendError(QSerialPort::SerialPortError error, const QString &error_message) override;
     void serialConnSendMessage() override;
-
-private:
     bool verifyChecksum();
 
 private slots:
     void serialConnReceiveMessage() override;
+    void sendMessage() override;
 };
 
 #endif // OVENCOMM_H

@@ -56,7 +56,7 @@
 #include <QSerialPort>
 #include <QObject>
 #include <QDebug>
-#include "ovenComm.h"
+#include "ovencomm.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -90,6 +90,7 @@ private slots:
     void on_pushButtonSetTemp_clicked();
     void on_pushButtonReadTemp_clicked();
     void on_pushButtonFSetTemp_clicked();
+    void on_pushButtonStartMessageTimer_clicked();
     void on_actionAbout_triggered();
 
     void on_pushButtonReadSet_clicked();

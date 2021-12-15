@@ -7,13 +7,13 @@ TEMPLATE = app
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    ovenComm.cpp \
+    ovencomm.cpp \
     serialcomm.cpp \
     settingsdialog.cpp
 
 HEADERS += \
     mainwindow.h \
-    ovenComm.h \
+    ovencomm.h \
     serialcomm.h \
     settingsdialog.h
 

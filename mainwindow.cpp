@@ -53,7 +53,7 @@
 #include "ui_mainwindow.h"
 #include "console.h"
 #include "settingsdialog.h"
-#include "ovenComm.h"
+#include "ovencomm.h"
 
 #include <QLabel>
 #include <QMessageBox>
@@ -221,5 +221,9 @@ void MainWindow::on_pushButtonReadPowerStatus_clicked() {
 
 void MainWindow::on_pushButtonSetPowerStatus_clicked() {
     o_serial->setPowerStatus(m_ui->spinBoxPowerStatus->value());
+}
+
+void MainWindow::on_pushButtonStartMessageTimer_clicked() {
+    o_serial->startSendMessageTimer();
 }
 
