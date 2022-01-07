@@ -124,10 +124,7 @@ void OvenComm::serialConnSendMessage() {
     }
 }
 
-bool OvenComm::verifyChecksum() {
-    const QString checksum = temp_data.mid(5,2);
-    const QString data = temp_data.mid(1,4);
-
+bool OvenComm::verifyChecksum(const QString &data, const QString &checksum) {
     // Verify checksum matches the data received
     qint16 sum_of_bytes = 0;
     for (int i=0; i<data.length(); i++) {
@@ -151,12 +148,12 @@ void OvenComm::serialConnReceiveMessage() {
     // complete data example: *01f4fb^
     // construct message from parts
     temp_data += serial_conn.readAll();
-
-    if(QRegExp("^\\*[a-fA-F0-9]{6}\\^$").exactMatch(temp_data)) {
+    QRegExp match_regex = QRegExp("^\\*([a-fA-F0-9]{4})([a-fA-F0-9]{2})\\^$");
+    if(match_regex.exactMatch(temp_data)) {
         emit rawDataSignal(temp_data);
         timeout_timer.stop();
 
-        if (verifyChecksum()) {
+        if (verifyChecksum(match_regex.cap(1), match_regex.cap(2))) {
             temp_data = "";
             data_queue.dequeue();
             command_queue.dequeue();

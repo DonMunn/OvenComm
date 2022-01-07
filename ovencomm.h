@@ -32,7 +32,7 @@ public:
 private:
     void sendError(QSerialPort::SerialPortError error, const QString &error_message) override;
     void serialConnSendMessage() override;
-    bool verifyChecksum();
+    bool verifyChecksum(const QString &data, const QString &checksum);
 
 private slots:
     void serialConnReceiveMessage() override;
